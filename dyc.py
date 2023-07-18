@@ -129,4 +129,102 @@ def max_sum_array(array):
 
 # print(max_sum_array(array))
 
+"""
+... Modelo 01 de final ...
+Un grupo de científicos han liberado “n” boyas en diferentes puntos de los océanos para
+realizar un estudio sobre las corrientes marinas. Cada boya tiene un emisor de posición
+que informa a una computadora central su ubicación cada minuto. Entre los estudios que
+desean realizar se encuentra determinar cuales dos boyas se encuentran más cerca entre
+sí. Ese proceso lo tienen que realizar en forma eficiente, ya que se realiza de forma
+constante y solo es uno de los tantos análisis que realizan. Utilizando división y
+conquista proponga una forma de solucionarlo. Explique paso a paso su solución y analice
+su complejidad. 
+"""
+
+def distancia(boya1, boya2):
+    return ((boya1[0] - boya2[0]) ** 2 + (boya1[1] - boya2[1]) ** 2) ** 0.5
+
+def boyas_cercanas(boyas):
+    if len(boyas) == 2:
+        return boyas
+    if len(boyas) == 1:
+        return [boyas[0], (float('inf'), float('inf'))]
+    if len(boyas) == 0:
+        return [(float('inf'), float('inf')), (float('inf'), float('inf'))]
+    
+    mix_x = min(boyas, key=lambda x: x[0])[0]
+    max_x = max(boyas, key=lambda x: x[0])[0]
+    mid_x = (mix_x + max_x) / 2
+    left_group, right_group = dividir_grupos(boyas, mid_x)
+    
+    cercanas_izq = boyas_cercanas(left_group)
+    cercanas_der = boyas_cercanas(right_group)
+
+    # tengo que ver si hay boyas cercanas entre los dos grupos
+    dist_izq = distancia(cercanas_izq[0], cercanas_izq[1]) if len(cercanas_izq) == 2 else float('inf') # O(1)
+    dist_der = distancia(cercanas_der[0], cercanas_der[1]) if len(cercanas_der) == 2 else float('inf') # O(1)
+    min_dist = min(dist_izq, dist_der) # O(1)
+    middle_group = []
+    for boya in boyas: # O(n)
+        if abs(boya[0] - mid_x) * 2 <= min_dist:
+            middle_group.append(boya)
+
+    y_grid_size, grid = armar_grilla_intermedia(mid_x, min_dist, middle_group)
+    
+    # recorro el grid y veo si hay boyas cercanas
+    cercanas = analizar_boyas_intermedias(min_dist, y_grid_size, grid)
+    return cercanas
+
+def dividir_grupos(boyas, mid_x):
+    left_group = []
+    right_group = []
+    for boya in boyas: # O(n)
+        if boya[0] < mid_x:
+            left_group.append(boya)
+        else:
+            right_group.append(boya)
+    return left_group,right_group
+
+def armar_grilla_intermedia(mid_x, min_dist, middle_group):
+    min_y = min(middle_group, key=lambda x: x[1])[1]
+    max_y = max(middle_group, key=lambda x: x[1])[1]
+    y_grid_size = (max_y - min_y) / min_dist
+    # grid 4 x y_size
+    grid = []
+    for i in range(y_grid_size): # O(n)
+        grid.append([])
+        for j in range(4):
+            grid[i].append([])
+    for boya in middle_group: # O(n)
+        x_index = int((boya[0] - mid_x) / min_dist)
+        y_index = int((boya[1] - min_y) / min_dist)
+        grid[y_index][x_index].append(boya)
+    return y_grid_size,grid
+
+def analizar_boyas_intermedias(min_dist, y_grid_size, grid):
+    cercanas = []
+    for boya in range(len(grid)): # O(n)
+        # hay que ver sólo las 8 celdas vecinas
+        x_index = boya[0] # type: ignore
+        y_index = boya[1] # type: ignore
+        rango_x = range(max(0, x_index - 1), min(4, x_index + 2))
+        rango_y = range(max(0, y_index - 1), min(y_grid_size, y_index + 2))
+        for i in rango_x: # O(1)
+            for j in rango_y:
+                for boya2 in grid[i][j]:
+                    if boya != boya2:
+                        if distancia(boya, boya2) < min_dist:
+                            cercanas = [boya, boya2]
+                            min_dist = distancia(boya, boya2)
+    return cercanas
+
+"""
+T(n) = 2T(n/2) + O(n)
+a = 2 | b = 2 | c = 1
+log_b(a) = c -> T(n) = Θ(n^c log(n)) = Θ(n log(n)) ✅
+
+! -> por deliración mental me acuerdo esto de la clase y me dió bien o cerca de bien, pero messirve 😎
+<3 dyc
+"""
+        
 

@@ -1,4 +1,3 @@
-"""
 .. 1 ..
 Nos dan una caja negra A que, dado un grafo no dirigido G = (V, E) y un número k
 se comporta de la siguiente manera:
@@ -10,9 +9,8 @@ Mostrar cómo podríamos resolver el problema del máximo conjunto independiente
 polinomial, usando llamadas a A si suponemos que A corre en tiempo polinomial en el
 tamaño de G y k. Describir la solución. ¿Tiene sentido la hipótesis de que A corre en
 tiempo polinomial en el tamaño de G y k? ¿Por qué? 
-"""
 
-"""
+
 Para resolver el problema del máximo conjunto independiente en tiempo polinomial, usamos
 el algoritmo de búsqueda binaria.
 1. Se obtiene la cantidad V de vértices del grafo G, ese valor es el límite superior del
@@ -33,9 +31,9 @@ algoritmo es polinomial.
 Como encontrar el máximo conjunto independiente es NP-Completo, entonces O( log(V) * O(A) )
 no puede ser polinomial. Y, de esta forma, no tiene sentido la hipótesis de que A corre en
 tiempo polinomial en el tamaño de G y k.
-"""
 
-"""
+##############################################################################################
+
 .. 3 ..
 Un almacén registra en una matriz qué productos compra cada uno de sus clientes. Un conjunto
 de clientes es diverso si cada uno de ellos compra cosas diferentes (tiene intersección vacía
@@ -51,9 +49,8 @@ Ejemplo de matriz de registro:
 Ana     1           3                       3
 Juan                            4
 Pedro   2                       1           1
-"""
 
-"""
+
 Para demostrar que el problema de los clientes diversos es NP-Completo, reducimos el problema
 de independent set a este problema.
 
@@ -87,14 +84,34 @@ Para este ejemplo, vamos a suponer que k = 3. Y vamos a pedirle al algoritmo de 
 que nos devuelva un conjunto de clientes de tamaño 3 que sea diverso.
 Lo cual nos va a devolver el conjunto {A, D, F} ya que A compra P1 y P2, D compra P3 y P7 y
 F compra P6 y P8. Por lo tanto, el conjunto es diverso.
-"""
 
-"""
+##############################################################################################
+
 ... 4 ...
 La siguiente es una versión de Independet Set. Dado un grafo G= (V, E) y un entero k, decimos
 que I ⊆ V es fuertemente independiente si dados dos vértices u y v en I, la arista (v, u) no
-pertenece a E y además no hay ningún camino de tamaño 2 (con dos aristas) de u a v. El
-problema de Strongly Independent Sets consiste en decidir si G tiene un conjunto fuertemente
+pertenece a E y además no hay ningún camino de tamaño 2 (con dos aristas) de u a v.
+El problema de Strongly Independent Sets consiste en decidir si G tiene un conjunto fuertemente
 independiente de tamaño al menos k. Probar que el problema de Strongly Independent Sets es NP
-completo (y para eso usar que Independent Set es NP completo). -> hecho en miro
-"""
+completo (y para eso usar que Independent Set es NP completo).
+
+-> miro
+
+##############################################################################################
+
+... Modelo 01 de final ...
+Se requiere realizar un viaje a través de un territorio de difícil acceso. El mismo se
+encuentra dividido en zonas por las que se debe pasar. Existen m facciones que controlan
+algunas de esas zonas. Una facción puede controlar más de 1 zona y una zona puede ser
+controlada por más de una. Para poder realizar el viaje se debe pactar con alguna de
+estas. Cada pacto con una facción nos asegura el paso seguro por todas las zonas que
+controlan independientemente de si alguna de sus zonas son también controladas por otras
+facciones. Deseamos saber si es posible pactar con no más de k facciones para poder
+concretar el viaje de forma segura.
+Se pide: Demostrar que el problema es NP-Completo.
+HINT: Se puede utilizar Vertex Cover.
+
+-> miro
+
+##############################################################################################
+

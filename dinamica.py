@@ -1,3 +1,5 @@
+# TODO hacer versión con memoria para cada ejercicio
+
 """
 .. 2 ..
 Dado un Grafo dirigido, acíclico G(V, E) con pesos en sus aristas y dos vértices
@@ -19,6 +21,9 @@ se devuelve el máximo de los pesos
 - Si un nodo no tiene adyacentes, se devuelve -1
 - Si un nodo es igual a t, se devuelve 0
 """
+
+from random import shuffle
+
 
 def antidijkstra(grafo, s, t): # -> O(V + E) (V = vértices, E = aristas) (Implementado como diccionario de diccionarios)
     if s == t:
@@ -248,4 +253,96 @@ def carteles_optimos(carteles, ult_cartel=-5):
     return optimos2
 
 # print(carteles_optimos(carteles))
+
+"""
+... Modelo 01 de final ...
+Una empresa que realiza ciencia de datos debe realizar en las próximas “n” semanas
+procesos y cálculos intensivos. Para eso debe contratar tiempo de cómputo en un data
+center. Realizando una estimación conocen cuantas horas de cómputo necesitarán para
+cada una de las semanas. Por otro lado luego de negociar con los principales
+proveedores tienen 2 opciones que pueden combinar a gusto:
+● Opción 1: Contratar a la empresa “Arganzón” por semana. En esa semana se cobra
+  proporcional al tiempo de cómputo según un parámetro “r”  (horas computo x r).
+● Opción 2: Contratar a la empresa “Fuddle” por un lapso de 3 semanas contiguas.
+  Durante el lapso contratado se paga una tarifa fija de “c”.
+
+Proponer una solución utilizando programación dinámica que nos indique la secuencia de
+elecciones a realizar para minimizar el costo total de cómputo. Analizar su complejidad
+temporal y espacial. 
+"""
+
+def contratar(weeks, r, c):
+    if len(weeks) == 0:
+        return 0, []
+    
+    # si contrato a Arganzón
+    opcion1 = contratar(weeks[1:], r, c)
+    costo1 = opcion1[0] + weeks[0] * r
+    
+    # si contrato a Fuddle
+    opcion2 = float("inf"), []
+    if len(weeks) >= 3:
+        opcion2 = contratar(weeks[3:], r, c)
+    costo2 = opcion2[0] + c
+    
+    if costo1 < costo2:
+        return costo1, ["A"] + opcion1[1]
+    return costo2, ["FFF"] + opcion2[1]
+
+# array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+# r = 1
+# c = 10
+# print(array)
+# print(contratar(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar(array, r, c))
+
+def generar_combinaciones(weeks, r, c):
+    if len(weeks) == 0:
+        return []
+    
+    # si contrato a Arganzón
+    opcion1 = generar_combinaciones(weeks[1:], r, c)
+    combinaciones1 = []
+    for opcion in opcion1:
+        combinaciones1.append(["A"] + opcion)
+    if len(combinaciones1) == 0:
+        combinaciones1.append(["A"])
+    
+    # si contrato a Fuddle
+    opcion2 = []
+    if len(weeks) >= 3:
+        opcion2 = generar_combinaciones(weeks[3:], r, c)
+    combinaciones2 = []
+    for opcion in opcion2:
+        combinaciones2.append(["FFF"] + opcion)
+    if len(combinaciones2) == 0:
+        combinaciones2.append(["FFF"])
+
+    return combinaciones1 + combinaciones2
+
+def costos_combinaciones(weeks, r, c):
+    combinaciones = generar_combinaciones(weeks, r, c)
+    costos = []
+    for combinacion in combinaciones:
+        costo = 0
+        for i in range(len(combinacion)):
+            if combinacion[i] == "A":
+                costo += weeks[i] * r
+            else:
+                costo += c
+        costos.append(costo)
+    return costos
+
+def min_costo(weeks, r, c):
+    costos = costos_combinaciones(weeks, r, c)
+    minimo = min(costos)
+    return minimo, costos.index(minimo)
+
+# print(min_costo([1, 2, 3, 4, 5, 6, 7, 8, 9], 1, 10))
+
 
