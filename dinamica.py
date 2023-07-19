@@ -345,4 +345,18 @@ def min_costo(weeks, r, c):
 
 # print(min_costo([1, 2, 3, 4, 5, 6, 7, 8, 9], 1, 10))
 
+"""
+... Modelo 02 de final ...
+Se conoce como “Longest increasing subsequences” al problema de encontrar la
+subsecuencia más larga de números (no necesariamente consecutivos) donde cada
+elemento sea mayor a los anteriores en una secuencia de números.
 
+Ejemplo:
+En la lista →  2, 1, 4, 2, 3, 9, 4, 6, 5, 4, 7.
+Podemos ver que la subsecuencia más larga es de longitud 6 y corresponde a la
+siguiente (marcada en negrita) “2, **1**, 4, **2**, **3**, 9, **4**, 6, **5**, 4, **7**”
+
+Este problema se puede resolver de varias maneras. Entre ellas, utilizando
+programación dinámica. Se pide: resolverlo mediante programación dinámica.
+Usar el ejemplo del enunciado para explicar paso a paso el método. 
+"""
