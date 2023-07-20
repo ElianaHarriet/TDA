@@ -346,17 +346,42 @@ def min_costo(weeks, r, c):
 # print(min_costo([1, 2, 3, 4, 5, 6, 7, 8, 9], 1, 10))
 
 """
-... Modelo 02 de final ...
-Se conoce como “Longest increasing subsequences” al problema de encontrar la
-subsecuencia más larga de números (no necesariamente consecutivos) donde cada
-elemento sea mayor a los anteriores en una secuencia de números.
+... Modelo 04 de final ...
+Recordemos al problema 2-Partition: Se cuenta con un conjunto de “n” elementos.
+Cada uno de ellos tiene un valor asociado. Se desea separar los elementos en 2
+conjuntos que cumplan con: La suma de los valores de cada conjunto sea igual
+entre ellos. Se puede ver que este corresponde a un problema NP-C. Sin embargo
+- al igual que otros problemas en esta clase como el problema de la mochila -
+puede ser resuelto utilizando programación dinámica.
 
-Ejemplo:
-En la lista →  2, 1, 4, 2, 3, 9, 4, 6, 5, 4, 7.
-Podemos ver que la subsecuencia más larga es de longitud 6 y corresponde a la
-siguiente (marcada en negrita) “2, **1**, 4, **2**, **3**, 9, **4**, 6, **5**, 4, **7**”
-
-Este problema se puede resolver de varias maneras. Entre ellas, utilizando
-programación dinámica. Se pide: resolverlo mediante programación dinámica.
-Usar el ejemplo del enunciado para explicar paso a paso el método. 
+Proponga un algoritmo utilizando programación dinámica que resuelva cualquier
+instancia de 2-Partition. Analice su complejidad temporal y espacial. 
 """
+
+def _two_partition(array, partitions):
+    if len(array) == 0:
+        return partitions
+    
+    # si lo agrego al primer conjunto
+    opcion1 = partitions[0] + [array[0]], partitions[1]
+    opcion1 = _two_partition(array[1:], opcion1)
+    if opcion1[0] == opcion1[1]:
+        return opcion1
+
+    # si lo agrego al segundo conjunto
+    opcion2 = partitions[0], partitions[1] + [array[0]]
+    opcion2 = _two_partition(array[1:], opcion2)
+    
+    if abs(sum(opcion1[0]) - sum(opcion1[1])) < abs(sum(opcion2[0]) - sum(opcion2[1])):
+        return opcion1
+    return opcion2
+
+def two_partition(array):
+    partitions = _two_partition(array, ([], []))
+    print(partitions)
+    return True if sum(partitions[0]) == sum(partitions[1]) else False
+
+array = [3, 1, 1, 2, 2, 1]
+print(two_partition(array))
+shuffle(array)
+print(two_partition(array))

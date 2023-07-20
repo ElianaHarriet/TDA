@@ -131,6 +131,7 @@ def max_sum_array(array):
 
 """
 ... Modelo 01 de final ...
+... Modelo 04 de final ...
 Un grupo de científicos han liberado “n” boyas en diferentes puntos de los océanos para
 realizar un estudio sobre las corrientes marinas. Cada boya tiene un emisor de posición
 que informa a una computadora central su ubicación cada minuto. Entre los estudios que

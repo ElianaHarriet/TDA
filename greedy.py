@@ -206,6 +206,96 @@ Demuestre que es óptima su solución.
 
 # Máximo mst??? -> resuelto más arriba
 
+"""
+... Modelo 04 de final ...
+El proceso de aprobación de trámites de la “central burocrática” está dividido en 2 partes.
+La primera parte consiste en una entrevista personalizada cuya duración se puede conocer
+según el tipo de trámite. La segunda parte es la revisión de la documentación cuya duración
+se calcula previamente mediante una fórmula matemática en función de la persona solicitante.
+Cada día se citan “n” personas. Cada una para realizar un trámite. Por cada persona se cuenta,
+entonces, con su tiempo de la etapa 1 y su tiempo de la etapa 2. La etapa 1 únicamente la
+realiza 1 empleado. Para la etapa 2, hay una cantidad ilimitada de personal para realizarla.
+Nuestra tarea es determinar el orden de atención para cada una de las “n”. El objetivo es
+minimizar el tiempo total de espera.
+Presentar una solución greedy que resuelva el problema. Explicar la optimalidad del mismo. 
+"""
+
+personas = {"A": [10, 5], "B": [5, 10], "C": [15, 15], "D": [20, 20], "E": [25, 25]} # (etapa 1, etapa 2)
+
+def orden(personas):
+    lista = list(personas.keys())
+    lista.sort(key=lambda x: personas[x][0])
+    return lista
+
+def espera(personas, lista=orden(personas)):
+    esperas = {}
+    comienzo_etapa_1 = 0
+    for persona in lista:
+        if comienzo_etapa_1 < personas[persona][1]:
+            esperas[persona] = comienzo_etapa_1
+        else:
+            esperas[persona] = comienzo_etapa_1 - personas[persona][1]
+        comienzo_etapa_1 += personas[persona][0]
+    return esperas
+
+# Sí, el algoritmo greedy es más corto que el de calcular los tiempos
+
+print("Orden: ", orden(personas))
+print("Esperas: ", espera(personas))
+print("Espera promedio: ", sum(espera(personas).values()) / len(espera(personas)))
+print("Espera máxima: ", max(espera(personas).values()))
+print("Espera total: ", sum(espera(personas).values()))
+
+
+
+"""
+... Modelo 05 de final ...
+Un fabricante de perfumes está intentando crear una nueva fragancia. Desea que la misma sea
+del menor costo posible. El perfumista le indicó un listado de ingredientes. Por cada uno de
+ellos determinó una cantidad mínima (puede ser cero) y una máxima que debe contar en la
+fórmula final. Cada ingrediente tiene asociado un costo por milímetros cúbicos. Conocemos que
+la presentación final es de X milímetros cúbicos totales. Presentar una solución utilizando
+metodología greedy que resuelva el problema. Analizar la complejidad temporal y espacial.
+Probar optimalidad.
+"""
+
+ingredientes = {"A": [0, 15], "B": [5, 20], "C": [10, 25], "D": [0, 10], "E": [5, 15], "F": [10, 20]}
+costos = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6}
+x = 50
+
+def agregar_ml_ingrediente(restantes, formula, ml_totales, ingrediente, ml_agregar):
+    formula[ingrediente] = formula.get(ingrediente, 0) + ml_agregar
+    ml_totales += ml_agregar
+    restantes[ingrediente][1] -= ml_agregar
+    if restantes[ingrediente][1] == 0:
+        del restantes[ingrediente]
+
+def formula(x, ingredientes, costos):
+    restantes = ingredientes.copy()
+    formula = {}
+    ml_totales = 0
+
+    # se pone la cantidad minima de cada ingrediente
+    for ingrediente in ingredientes:
+        if ingrediente[0] == 0:
+            continue
+        agregar_ml_ingrediente(restantes, formula, ml_totales, ingrediente, ingredientes[ingrediente][0])
+        restantes[ingrediente][0] = 0
+
+    # mientras falte para llegar a x se toma el ingrediente más barato
+    while ml_totales < x:
+        if len(restantes) == 0:
+            print(ml_totales)
+            print("No se puede llegar a x")
+            return None
+        ml_restantes = x - ml_totales
+        ingrediente_mas_barato = min(restantes, key=lambda x: costos[x])
+        ml_agregar = min(ml_restantes, restantes[ingrediente_mas_barato][1])
+        agregar_ml_ingrediente(restantes, formula, ml_totales, ingrediente_mas_barato, ml_agregar)
+
+    return formula
+
+# print("Formula: ", formula(x, ingredientes, costos))
 
 
 
