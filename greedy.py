@@ -227,24 +227,50 @@ def orden(personas):
     lista.sort(key=lambda x: personas[x][0])
     return lista
 
-def espera(personas, lista=orden(personas)):
+def orden2(personas):
+    lista = list(personas.keys())
+    lista.sort(key=lambda x: personas[x][1], reverse=True)
+    return lista
+
+# def espera(personas, lista=orden(personas)):
+#     esperas = {}
+#     comienzo_etapa_1 = 0
+#     for persona in lista:
+#         if comienzo_etapa_1 < personas[persona][1]:
+#             esperas[persona] = comienzo_etapa_1
+#         else:
+#             esperas[persona] = comienzo_etapa_1 - personas[persona][1]
+#         comienzo_etapa_1 += personas[persona][0]
+#     return esperas
+
+def sale_ultimo(personas, lista=orden(personas)):
     esperas = {}
     comienzo_etapa_1 = 0
     for persona in lista:
-        if comienzo_etapa_1 < personas[persona][1]:
-            esperas[persona] = comienzo_etapa_1
-        else:
-            esperas[persona] = comienzo_etapa_1 - personas[persona][1]
+        esperas[persona] = comienzo_etapa_1
         comienzo_etapa_1 += personas[persona][0]
-    return esperas
+    for persona in lista:
+        esperas[persona] += personas[persona][0] + personas[persona][1]
+    ultimo = max(esperas, key=lambda x: esperas[x])
+    return esperas[ultimo]
+
 
 # Sí, el algoritmo greedy es más corto que el de calcular los tiempos
 
-print("Orden: ", orden(personas))
-print("Esperas: ", espera(personas))
-print("Espera promedio: ", sum(espera(personas).values()) / len(espera(personas)))
-print("Espera máxima: ", max(espera(personas).values()))
-print("Espera total: ", sum(espera(personas).values()))
+# print("Orden: ", orden(personas))
+# print("Esperas: ", espera2(personas))
+# print("Espera promedio: ", sum(espera2(personas).values()) / len(espera2(personas)))
+# print("Espera máxima: ", max(espera2(personas).values()))
+# print("Espera total: ", sum(espera2(personas).values()))
+# print("--------------------")
+# print("Orden 2: ", orden2(personas))
+# print("Esperas 2: ", espera2(personas, orden2(personas)))
+# print("Espera promedio 2: ", sum(espera2(personas, orden2(personas)).values()) / len(espera2(personas, orden2(personas))))
+# print("Espera máxima 2: ", max(espera2(personas, orden2(personas)).values()))
+# print("Espera total 2: ", sum(espera2(personas, orden2(personas)).values()))
+
+print("Sale último: ", sale_ultimo(personas))
+print("Sale último 2: ", sale_ultimo(personas, orden2(personas)))
 
 
 

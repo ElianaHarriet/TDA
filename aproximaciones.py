@@ -1,5 +1,6 @@
 """
 ... Modelo 03 de final ...
+... Modelo 05 de final ...
 Una empresa multinacional está revisando su lista de proveedores. Tienen una lista de “n” productos,
 materias primas e insumos que adquieren todos los meses. Su proceso de compras es muy descentralizado
 y tienen un número actual de “m” proveedores. Piensan que pueden bajar los costos si reducen la

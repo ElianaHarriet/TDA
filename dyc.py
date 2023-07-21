@@ -227,5 +227,61 @@ log_b(a) = c -> T(n) = Θ(n^c log(n)) = Θ(n log(n)) ✅
 ! -> por deliración mental me acuerdo esto de la clase y me dió bien o cerca de bien, pero messirve 😎
 <3 dyc
 """
-        
+
+"""
+... Modelo 05 de final ...
+Un equipo de trabajo ha realizado una votación anónima para seleccionar a una persona
+entre ellos que los represente. En total hay “n” personas. Cada una de ellas realiza
+un voto. Tenemos el voto de cada uno de ellos. El líder debe ser seleccionado por más
+del 50% del total para ganar. Proponer un algoritmo por división y conquista que
+determine si hay un ganador y en caso afirmativo que informe quien es. Analice la
+complejidad de su propuesta 
+"""
+
+votos = ["A", "B", "A", "C", "B", "A", "C", "C", "B", "C", "A", "A"]
+
+def votacion(votos):
+    if len(votos) == 0:
+        return 0, None
+    
+    if len(votos) == 1:
+        return 1, votos[0]
+    
+    middle = len(votos) // 2
+
+    cant1, votado1 = votacion(votos[:middle])
+    cant2, votado2 = votacion(votos[middle:])
+
+    if votado1 == votado2:
+        return cant1 + cant2, votado1
+    
+    return (cant1, votado1) if cant1 > cant2 else (cant2, votado2)
+
+# print(votacion(votos))
+
+"""
+// Implementar, por división y conquista, una función que dado un arreglo sin elementos repetidos y casi
+// ordenado (todos los elementos se encuentran ordenados, salvo uno), obtenga el elemento fuera de lugar.
+"""
+# en python
+def elemento_desordenado(arr):
+    if len(arr) == 1:
+        return None
+    
+    middle = len(arr) // 2
+
+    first_half = arr[:middle]
+    second_half = arr[middle:]
+
+    if first_half[-1] > second_half[0]:
+        return second_half[0]
+
+    op1 = elemento_desordenado(first_half)
+    op2 = elemento_desordenado(second_half)
+
+    return op1 if op1 is not None else op2
+    
+
+arr = [1, 2, 4, 5, 6, 3, 7, 8, 9]
+# print(elemento_desordenado(arr))
 

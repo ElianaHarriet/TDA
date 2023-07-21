@@ -346,6 +346,45 @@ def min_costo(weeks, r, c):
 # print(min_costo([1, 2, 3, 4, 5, 6, 7, 8, 9], 1, 10))
 
 """
+... Modelo 02 de final ...
+Se conoce como “Longest increasing subsequences” al problema de encontrar la subsecuencia
+más larga de números (no necesariamente consecutivos) donde cada elemento sea mayor a los
+anteriores en una secuencia de números.
+
+Ejemplo:
+    En la lista →  2, 1, 4, 2, 3, 9, 4, 6, 5, 4, 7.
+    Podemos ver que la subsecuencia más larga es de longitud 6 y corresponde a la siguiente
+    “2, *1*, 4, *2*, *3*, 9, *4*, 6, *5*, 4, *7*”
+
+Este problema se puede resolver de varias maneras. Entre ellas, utilizando programación
+dinámica.
+Se pide: resolverlo mediante programación dinámica. Usar el ejemplo del enunciado para
+explicar paso a paso el método. 
+"""
+
+array = [2, 1, 4, 2, 3, 9, 4, 6, 5, 4, 7]
+
+def longest_increblahblah(array, minimo=0):
+    if len(array) == 0:
+        return []
+
+    # tomo el primer elemento que sea mayor al minimo
+    menores = [i for i in range(len(array)) if array[i] > minimo]
+    if len(menores) == 0:
+        return []
+    primero = min(menores)
+    
+    # si tengo en cuenta el primero
+    opcion1 = [array[primero]] + longest_increblahblah(array[primero + 1:], array[primero])
+
+    # si no tengo en cuenta el primero
+    opcion2 = longest_increblahblah(array[primero + 1:], minimo)
+
+    return opcion1 if len(opcion1) > len(opcion2) else opcion2
+
+# print(longest_increblahblah(array))
+
+"""
 ... Modelo 04 de final ...
 Recordemos al problema 2-Partition: Se cuenta con un conjunto de “n” elementos.
 Cada uno de ellos tiene un valor asociado. Se desea separar los elementos en 2
@@ -382,6 +421,70 @@ def two_partition(array):
     return True if sum(partitions[0]) == sum(partitions[1]) else False
 
 array = [3, 1, 1, 2, 2, 1]
-print(two_partition(array))
-shuffle(array)
-print(two_partition(array))
+# print(two_partition(array))
+# shuffle(array)
+# print(two_partition(array))
+
+"""
+... Modelo 05 de final ...
+El dueño de una cosechadora está teniendo una demanda muy elevada en los próximos
+3 meses. Desde “n” campos lo quieren contratar para que preste sus servicios.
+Lamentablemente no puede hacer todos los contratos puesto que varios de ellos se
+superponen en sus tiempos. Cuenta con un listado de los pedidos donde para cada uno
+de ellos se consigna: fecha de inicio, fecha de finalización, monto a ganar por
+realizarlo. Su idea es seleccionar la mayor cantidad de trabajos posibles. Por eso
+seleccionará primero aquellos trabajos que le demanden menos tiempo. Mostrarle que
+esta solución puede no ser la óptima. Proponer una solución utilizando programación
+dinámica que nos otorgue el resultado óptimo. Analizar su complejidad temporal y
+espacial.
+"""
+
+ofertas = [(0, 5, 10), (0, 3, 5), (4, 6, 7), (5, 7, 8), (6, 10, 9), (8, 10, 10), (9, 10, 11)] # (inicio, fin, monto)
+
+def mejor_plan(ofertas):
+    # se ordenan las ofertas
+    # - 1° criterio: fecha de inicio
+    # - 2° criterio (desempate): fecha de fin
+    ofertas.sort(key=lambda x: (x[0], x[1]))
+    
+    return _mejor_plan(ofertas)
+
+def _mejor_plan(ofertas):
+    if len(ofertas) == 0:
+        return 0, []
+    
+    primera = ofertas[0]
+
+    # si tomo la primera
+    # elimino las ofertas que se superponen con la primera
+    filtradas = [oferta for oferta in ofertas if oferta[0] >= primera[1]]
+    opcion1 = _mejor_plan(filtradas)
+    opcion1 = (opcion1[0] + primera[2], [primera] + opcion1[1])
+
+    # si no tomo la primera
+    resto = ofertas[1:]
+    opcion2 = _mejor_plan(resto)
+
+    return opcion1 if opcion1[0] > opcion2[0] else opcion2
+
+# versión greedy que elige la oferta que elige las ofertas que demandan menos tiempo
+def posible(oferta, seleccionadas):
+    for seleccionada in seleccionadas:
+        if oferta[0] >= seleccionada[1] or oferta[1] <= seleccionada[0]:
+            continue
+        return False
+    return True
+
+def mejor_plan_greedy(ofertas):
+    ofertas.sort(key=lambda x: x[1] - x[0])
+    seleccionadas = []
+    for oferta in ofertas:
+        if len(seleccionadas) == 0:
+            seleccionadas.append(oferta)
+            continue
+        if posible(oferta, seleccionadas):
+            seleccionadas.append(oferta)
+    return sum([oferta[2] for oferta in seleccionadas]), seleccionadas
+
+# print(mejor_plan_greedy(ofertas))
+# print(mejor_plan(ofertas))

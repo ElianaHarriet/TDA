@@ -115,3 +115,13 @@ HINT: Se puede utilizar Vertex Cover.
 
 ##############################################################################################
 
+... Modelo 02 de final ...
+Para un evento a realizar se requiere conformar una selección musical entre el conjunto
+A de “n” canciones. Podemos enumerar a los elementos de A como a1 ,a2 ,...,an . Por otra
+parte, contamos con un conjunto “B” de “m” personas. Cada una de ellas con un subsets de
+esas canciones que le gustan. Deseamos saber si podemos seleccionar un subconjunto de no
+más de “k” canciones, de tal forma que existe al menos 1 canción que le gusta a cada uno.
+Se pide: Demostrar que el problema es NP-Completo.
+HINT: Se puede utilizar Vertex Cover.
+
+-> miro
