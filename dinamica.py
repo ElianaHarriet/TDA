@@ -24,7 +24,6 @@ se devuelve el máximo de los pesos
 
 from random import shuffle
 
-
 def antidijkstra(grafo, s, t): # -> O(V + E) (V = vértices, E = aristas) (Implementado como diccionario de diccionarios)
     if s == t:
         return 0, [t]
@@ -42,6 +41,8 @@ def antidijkstra(grafo, s, t): # -> O(V + E) (V = vértices, E = aristas) (Imple
     
     maximo = max(posibles.values(), key=lambda x: x[0])
     return maximo
+
+# Usa memoria -> Es dinámica posta
 
 """
 .. 3 ..
@@ -97,6 +98,9 @@ def fiesta(organigrama, ratings, lo_tengo_en_cuenta=True):
         return opcion1 + ratings[actual], [actual] + lista1
     
     return opcion2, lista2
+
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
 
 """
 ... 5 ...
@@ -184,6 +188,9 @@ def posibles_mensajes(diccionario, cadena, min_ini=0):
 # diccionario = {"peso", "pesado", "oso", "soso", "pesa", "dote", "a", "te"}
 # cadena = "osopesadotepesa"
 # print(posibles_mensajes(diccionario, cadena))
+
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
     
 
 """
@@ -254,6 +261,9 @@ def carteles_optimos(carteles, ult_cartel=-5):
 
 # print(carteles_optimos(carteles))
 
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
+
 """
 ... Modelo 01 de final ...
 Una empresa que realiza ciencia de datos debe realizar en las próximas “n” semanas
@@ -301,6 +311,10 @@ def contratar(weeks, r, c):
 # print(array)
 # print(contratar(array, r, c))
 
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
+
+# funciones para verificar
 def generar_combinaciones(weeks, r, c):
     if len(weeks) == 0:
         return []
@@ -384,6 +398,9 @@ def longest_increblahblah(array, minimo=0):
 
 # print(longest_increblahblah(array))
 
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
+
 """
 ... Modelo 04 de final ...
 Recordemos al problema 2-Partition: Se cuenta con un conjunto de “n” elementos.
@@ -424,6 +441,9 @@ array = [3, 1, 1, 2, 2, 1]
 # print(two_partition(array))
 # shuffle(array)
 # print(two_partition(array))
+
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
 
 """
 ... Modelo 05 de final ...
@@ -466,6 +486,9 @@ def _mejor_plan(ofertas):
     opcion2 = _mejor_plan(resto)
 
     return opcion1 if opcion1[0] > opcion2[0] else opcion2
+
+# No usa memoria -> Es dinámica trucha
+# TODO -> ARREGLAR
 
 # versión greedy que elige la oferta que elige las ofertas que demandan menos tiempo
 def posible(oferta, seleccionadas):
