@@ -44,6 +44,8 @@ def antidijkstra(grafo, s, t): # -> O(V + E) (V = vértices, E = aristas) (Imple
 
 # Usa memoria -> Es dinámica posta
 
+# TODO -> Revisar complejidad y que está bien (me da a robo que sea lineal :sus:)
+
 """
 .. 3 ..
 El dueño de una empresa (Charles Fabs) desea organizar una fiesta de la misma. Cómo quiere
