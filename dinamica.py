@@ -22,7 +22,7 @@ se devuelve el máximo de los pesos
 - Si un nodo es igual a t, se devuelve 0
 """
 
-from random import shuffle
+from random import shuffle, randint
 
 def antidijkstra(grafo, s, t): # -> O(V + E) (V = vértices, E = aristas) (Implementado como diccionario de diccionarios)
     if s == t:
@@ -147,7 +147,7 @@ def prox_palabra_posible(diccionario, cadena, inicio, fin):
         
     return None, -1
 
-def posible_mensaje(diccionario, cadena, min_ini=0):
+def posible_mensaje_recursivo(diccionario, cadena, min_ini=0):
     if len(cadena) == 0:
         return True
     
@@ -156,18 +156,37 @@ def posible_mensaje(diccionario, cadena, min_ini=0):
         return False
     
     # si tengo en cuenta la palabra
-    if posible_mensaje(diccionario, cadena[new_ini:]):
-        print(prox_palabra)
+    if posible_mensaje_recursivo(diccionario, cadena[new_ini:]):
         return True
     
     # si no tengo en cuenta la palabra
-    return posible_mensaje(diccionario, cadena, new_ini)
+    return posible_mensaje_recursivo(diccionario, cadena, new_ini)
 
 # diccionario = {"peso", "pesado", "oso", "soso", "pesa", "dote", "a", "te"}
 # cadena = "osopesadotepesa"
-# print(posible_mensaje(diccionario, cadena))
+# print(posible_mensaje_recursivo(diccionario, cadena))
 
-def posibles_mensajes(diccionario, cadena, min_ini=0):
+def posible_mensaje_dinamico(diccionario, cadena):
+    if len(cadena) == 0:
+        return True
+    
+    memoria = [False] * len(cadena) # memoria[i] = posible_mensaje(cadena[i:])
+
+    for desde in range(len(cadena) - 1, -1, -1):
+        for hasta in range(desde + 1, len(cadena) + 1):
+            palabra = cadena[desde:hasta]
+            if palabra in diccionario:
+                if hasta == len(cadena) or memoria[hasta]:
+                    memoria[desde] = True
+                    break
+
+    return memoria[0]
+
+# diccionario = {"peso", "pesado", "oso", "soso", "pesa", "dote", "a", "te"}
+# cadena = "osopesadopesotepesa"
+# print(posible_mensaje_dinamico(diccionario, cadena))
+
+def posibles_mensajes_recursivo(diccionario, cadena, min_ini=0):
     if len(cadena) == min_ini:
         return [[]]
     
@@ -176,24 +195,70 @@ def posibles_mensajes(diccionario, cadena, min_ini=0):
         return []
 
     # si tengo en cuenta la palabra
-    mensajes = posibles_mensajes(diccionario, cadena[new_ini:])
+    mensajes = posibles_mensajes_recursivo(diccionario, cadena[new_ini:])
     for mensaje in mensajes:
         if len(mensaje) == 0 and len(mensajes) > 1:
             mensajes.remove(mensaje)
         mensaje.append(prox_palabra)
     
     # si no tengo en cuenta la palabra
-    mensajes += posibles_mensajes(diccionario, cadena, new_ini)
+    mensajes += posibles_mensajes_recursivo(diccionario, cadena, new_ini)
 
     return mensajes
 
 # diccionario = {"peso", "pesado", "oso", "soso", "pesa", "dote", "a", "te"}
 # cadena = "osopesadotepesa"
-# print(posibles_mensajes(diccionario, cadena))
+# print(posibles_mensajes_recursivo(diccionario, cadena))
 
-# No usa memoria -> Es dinámica trucha
-# TODO -> ARREGLAR
-    
+def posibles_mensajes_dinamico_debug(diccionario, cadena):
+    if len(cadena) == 0:
+        return [[]]
+
+    memoria = [[] for i in range(len(cadena))] # memoria[i] = posibles_mensajes(cadena[i:])
+
+    for desde in range(len(cadena) - 1, -1, -1):
+        print(desde)
+        for hasta in range(desde + 1, len(cadena) + 1):
+            print("\t", hasta)
+            palabra = cadena[desde:hasta]
+            if palabra in diccionario:
+                print("\t\t", palabra)
+                print("\t\t", memoria)
+                if hasta == len(cadena):
+                    memoria[desde].append([palabra])
+                    print("\t\t", memoria[desde])
+                    break
+                posibles_continuaciones = memoria[hasta]
+                memoria[desde] += [[palabra] + posible_continuacion for posible_continuacion in posibles_continuaciones]
+                print("\t\t", palabra, memoria[hasta])
+                print("\t\t", [[palabra, *posible_continuacion] for posible_continuacion in posibles_continuaciones])
+
+    return memoria[0]
+
+def posibles_mensajes_dinamico(diccionario, cadena):
+    if len(cadena) == 0:
+        return [[]]
+
+    memoria = [[] for i in range(len(cadena))] # memoria[i] = posibles_mensajes(cadena[i:])
+
+    for desde in range(len(cadena) - 1, -1, -1):
+        for hasta in range(desde + 1, len(cadena) + 1):
+            palabra = cadena[desde:hasta]
+
+            if palabra in diccionario:
+                
+                if hasta == len(cadena):
+                    memoria[desde] += [[palabra]]
+                    break
+
+                posibles_continuaciones = memoria[hasta]
+                memoria[desde] += [[palabra] + posible_continuacion for posible_continuacion in posibles_continuaciones]
+
+    return memoria[0]
+
+# diccionario = {"peso", "pesado", "oso", "soso", "pesa", "dote", "a", "te"}
+# cadena = "osopesadotepesa"
+# print(posibles_mensajes_dinamico(diccionario, cadena))
 
 """
 ... 7 ...
@@ -237,7 +302,7 @@ def suma_carteles(carteles):
         suma += cartel[1]
     return suma
 
-def carteles_optimos(carteles, ult_cartel=-5):
+def carteles_optimos_recursivo(carteles, ult_cartel=-5):
     carteles.sort(key=lambda x: x[0])
     
     index = prox_cartel(carteles, ult_cartel)
@@ -251,20 +316,47 @@ def carteles_optimos(carteles, ult_cartel=-5):
     resto = carteles[index + 1:]
     
     # si tengo en cuenta el primer cartel
-    optimos1 = carteles_optimos(resto, primero[0])
+    optimos1 = carteles_optimos_recursivo(resto, primero[0])
     optimos1.insert(0, primero)
 
     # si no tengo en cuenta el primer cartel
-    optimos2 = carteles_optimos(resto, ult_cartel)
+    optimos2 = carteles_optimos_recursivo(resto, ult_cartel)
     
     if suma_carteles(optimos1) > suma_carteles(optimos2):
         return optimos1
     return optimos2
 
-# print(carteles_optimos(carteles))
+# print(carteles_optimos_recursivo(carteles))
 
-# No usa memoria -> Es dinámica trucha
-# TODO -> ARREGLAR
+def carteles_optimos_dinamico(carteles):
+    carteles.sort(key=lambda x: x[0])
+    
+    memoria = [[] for i in range(len(carteles))] # memoria[i] = carteles_optimos(carteles[i:])
+    memoria[0] = [carteles[0]]
+
+    for i in range(1, len(carteles)):
+        cartel = carteles[i]
+
+        # si hay más de 5km entre el cartel actual y el anterior
+        # ponemos todos los carteles anteriores y el actual
+        if cartel[0] >= memoria[i - 1][-1][0] + 5:
+            memoria[i] = memoria[i - 1] + [cartel]
+            continue
+
+        # si no, vemos si conviene poner el cartel actual
+        # o conviene no ponerlo
+        ult_opcion_posible = None
+        for j in range(i - 1, -1, -1):
+            if cartel[0] >= memoria[j][-1][0] + 5:
+                ult_opcion_posible = j
+                break
+        opcion1 = memoria[ult_opcion_posible] + [cartel] if ult_opcion_posible is not None else [cartel]
+        opcion2 = memoria[i - 1]
+        memoria[i] = opcion1 if suma_carteles(opcion1) > suma_carteles(opcion2) else opcion2
+
+    return memoria[-1]
+
+# print(carteles_optimos_dinamico(carteles))
 
 """
 ... Modelo 01 de final ...
@@ -283,18 +375,18 @@ elecciones a realizar para minimizar el costo total de cómputo. Analizar su com
 temporal y espacial. 
 """
 
-def contratar(weeks, r, c):
+def contratar_recursivo(weeks, r, c):
     if len(weeks) == 0:
         return 0, []
     
     # si contrato a Arganzón
-    opcion1 = contratar(weeks[1:], r, c)
+    opcion1 = contratar_recursivo(weeks[1:], r, c)
     costo1 = opcion1[0] + weeks[0] * r
     
     # si contrato a Fuddle
     opcion2 = float("inf"), []
     if len(weeks) >= 3:
-        opcion2 = contratar(weeks[3:], r, c)
+        opcion2 = contratar_recursivo(weeks[3:], r, c)
     costo2 = opcion2[0] + c
     
     if costo1 < costo2:
@@ -305,16 +397,82 @@ def contratar(weeks, r, c):
 # r = 1
 # c = 10
 # print(array)
-# print(contratar(array, r, c))
+# print(contratar_recursivo(array, r, c))
 # shuffle(array)
 # print(array)
-# print(contratar(array, r, c))
+# print(contratar_recursivo(array, r, c))
 # shuffle(array)
 # print(array)
-# print(contratar(array, r, c))
+# print(contratar_recursivo(array, r, c))
 
-# No usa memoria -> Es dinámica trucha
-# TODO -> ARREGLAR
+def contratar_dinamico(weeks, r, c):
+    if len(weeks) == 0:
+        return 0, []
+    
+    memoria = [(0, []) for i in range(len(weeks))] # memoria[i] = contratar(weeks[i:], r, c)
+
+    for i in range(len(weeks)):
+        semana = weeks[i]
+
+        # si contrato a Arganzón
+        opcion1 = memoria[i - 1] if i > 0 else (0, [])
+        costo1 = opcion1[0] + semana * r
+
+        # si contrato a Fuddle
+        opcion2 = (float("inf"), [])
+        if i >= 2:
+            opcion2 = memoria[i - 3] if i - 3 >= 0 else (0, [])
+        costo2 = opcion2[0] + c
+
+        if costo1 < costo2:
+            memoria[i] = costo1, opcion1[1] + ["A"] 
+        else:
+            memoria[i] = costo2, opcion2[1] + ["FFF"]
+
+    return memoria[-1]
+
+# array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+# r = 1
+# c = 10
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# array = [1, 3, 1, 1, 1, 10, 10, 10, 9, 8, 4, 8, 3, 4, 1]
+# r = 3
+# c = 15
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# random_array = [randint(1, 10) for i in range(15)]
+# r = randint(1, 5)
+# c = randint(10, 20)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
+# shuffle(array)
+# print(array)
+# print(contratar_recursivo(array, r, c))
+# print(contratar_dinamico(array, r, c))
 
 # funciones para verificar
 def generar_combinaciones(weeks, r, c):
@@ -380,7 +538,7 @@ explicar paso a paso el método.
 
 array = [2, 1, 4, 2, 3, 9, 4, 6, 5, 4, 7]
 
-def longest_increblahblah(array, minimo=0):
+def longest_increblahblah_recursivo(array, minimo=0):
     if len(array) == 0:
         return []
 
@@ -391,17 +549,58 @@ def longest_increblahblah(array, minimo=0):
     primero = min(menores)
     
     # si tengo en cuenta el primero
-    opcion1 = [array[primero]] + longest_increblahblah(array[primero + 1:], array[primero])
+    opcion1 = [array[primero]] + longest_increblahblah_recursivo(array[primero + 1:], array[primero])
 
     # si no tengo en cuenta el primero
-    opcion2 = longest_increblahblah(array[primero + 1:], minimo)
+    opcion2 = longest_increblahblah_recursivo(array[primero + 1:], minimo)
 
     return opcion1 if len(opcion1) > len(opcion2) else opcion2
 
-# print(longest_increblahblah(array))
+# print(longest_increblahblah_recursivo(array))
+from copy import deepcopy
+def longest_increblahblah_dinamico(array):
+    if len(array) == 0:
+        return []
+    
+    memoria = [[] for i in range(len(array))] # memoria[i] = longest_increblahblah(array[i:])
+    memoria[0] = [array[0]]
 
-# No usa memoria -> Es dinámica trucha
-# TODO -> ARREGLAR
+    for i in range(1, len(array)):
+        numero = array[i]
+
+        # si el último numero es menor al actual
+        # ponemos la secuencia anterior y el actual
+        if memoria[i - 1][-1] < numero:
+            memoria[i] = memoria[i - 1] + [numero]
+            continue
+
+        # si no, vemos si conviene poner el numero actual
+        # o conviene no ponerlo
+        ult_opcion_posible = None
+        opciones = deepcopy(memoria[:i - 1])
+        # se ordenan las opciones
+        # 1° criterio: longitud
+        # 2° criterio (desempate): último número más chico
+        opciones.sort(key=lambda x: (len(x), x[-1]))
+        for j in range(len(opciones) - 1, -1, -1):
+            if opciones[j][-1] < numero:
+                ult_opcion_posible = memoria.index(opciones[j])
+                break
+        opcion1 = memoria[ult_opcion_posible] + [numero] if ult_opcion_posible is not None else [numero]
+        opcion2 = memoria[i - 1]
+        
+        if len(opcion1) > len(opcion2):  # feo pero funca ._.
+            memoria[i] = opcion1
+        elif len(opcion1) < len(opcion2):
+            memoria[i] = opcion2
+        elif opcion1[-1] < opcion2[-1]:
+            memoria[i] = opcion1
+        else:
+            memoria[i] = opcion2
+
+    return memoria[-1]
+
+# print(longest_increblahblah_dinamico(array))
 
 """
 ... Modelo 04 de final ...
@@ -416,33 +615,33 @@ Proponga un algoritmo utilizando programación dinámica que resuelva cualquier
 instancia de 2-Partition. Analice su complejidad temporal y espacial. 
 """
 
-def _two_partition(array, partitions):
+def _two_partition_recursivo(array, partitions):
     if len(array) == 0:
         return partitions
     
     # si lo agrego al primer conjunto
     opcion1 = partitions[0] + [array[0]], partitions[1]
-    opcion1 = _two_partition(array[1:], opcion1)
+    opcion1 = _two_partition_recursivo(array[1:], opcion1)
     if opcion1[0] == opcion1[1]:
         return opcion1
 
     # si lo agrego al segundo conjunto
     opcion2 = partitions[0], partitions[1] + [array[0]]
-    opcion2 = _two_partition(array[1:], opcion2)
+    opcion2 = _two_partition_recursivo(array[1:], opcion2)
     
     if abs(sum(opcion1[0]) - sum(opcion1[1])) < abs(sum(opcion2[0]) - sum(opcion2[1])):
         return opcion1
     return opcion2
 
-def two_partition(array):
-    partitions = _two_partition(array, ([], []))
+def two_partition_recursivo(array):
+    partitions = _two_partition_recursivo(array, ([], []))
     print(partitions)
     return True if sum(partitions[0]) == sum(partitions[1]) else False
 
 array = [3, 1, 1, 2, 2, 1]
-# print(two_partition(array))
+# print(two_partition_recursivo(array))
 # shuffle(array)
-# print(two_partition(array))
+# print(two_partition_recursivo(array))
 
 # No usa memoria -> Es dinámica trucha
 # TODO -> ARREGLAR
@@ -463,15 +662,15 @@ espacial.
 
 ofertas = [(0, 5, 10), (0, 3, 5), (4, 6, 7), (5, 7, 8), (6, 10, 9), (8, 10, 10), (9, 10, 11)] # (inicio, fin, monto)
 
-def mejor_plan(ofertas):
+def mejor_plan_recursivo(ofertas):
     # se ordenan las ofertas
     # - 1° criterio: fecha de inicio
     # - 2° criterio (desempate): fecha de fin
     ofertas.sort(key=lambda x: (x[0], x[1]))
     
-    return _mejor_plan(ofertas)
+    return _mejor_plan_recursivo(ofertas)
 
-def _mejor_plan(ofertas):
+def _mejor_plan_recursivo(ofertas):
     if len(ofertas) == 0:
         return 0, []
     
@@ -480,17 +679,47 @@ def _mejor_plan(ofertas):
     # si tomo la primera
     # elimino las ofertas que se superponen con la primera
     filtradas = [oferta for oferta in ofertas if oferta[0] >= primera[1]]
-    opcion1 = _mejor_plan(filtradas)
+    opcion1 = _mejor_plan_recursivo(filtradas)
     opcion1 = (opcion1[0] + primera[2], [primera] + opcion1[1])
 
     # si no tomo la primera
     resto = ofertas[1:]
-    opcion2 = _mejor_plan(resto)
+    opcion2 = _mejor_plan_recursivo(resto)
 
     return opcion1 if opcion1[0] > opcion2[0] else opcion2
 
-# No usa memoria -> Es dinámica trucha
-# TODO -> ARREGLAR
+def mejor_plan_dinamico(ofertas):
+    if len(ofertas) == 0:
+        return 0, []
+    
+    ofertas.sort(key=lambda x: (x[0], x[1]))
+    memoria = [(0, []) for i in range(len(ofertas))] # memoria[i] = mejor_plan(ofertas[i:])
+    memoria[0] = ofertas[0][2], [ofertas[0]]
+
+    for i in range(1, len(ofertas)):
+        oferta = ofertas[i]
+
+        # si la oferta actual no se superpone con la anterior
+        # ponemos la oferta anterior y la actual
+        if oferta[0] >= memoria[i - 1][1][-1][1]:
+            memoria[i] = memoria[i - 1][0] + oferta[2], memoria[i - 1][1] + [oferta]
+            continue
+
+        # si no, vemos si conviene poner la oferta actual
+        # o conviene no ponerla
+        ult_opcion_posible = None
+        for j in range(i - 1, -1, -1):
+            if oferta[0] >= memoria[j][1][-1][1]:
+                ult_opcion_posible = j
+                break
+        opcion1 = oferta[2], [oferta]
+        if ult_opcion_posible is not None:
+            opcion1 = memoria[ult_opcion_posible][0] + oferta[2], memoria[ult_opcion_posible][1] + [oferta]
+        
+        opcion2 = memoria[i - 1]
+        memoria[i] = opcion1 if opcion1[0] > opcion2[0] else opcion2
+
+    return memoria[-1]
 
 # versión greedy que elige la oferta que elige las ofertas que demandan menos tiempo
 def posible(oferta, seleccionadas):
@@ -512,4 +741,5 @@ def mejor_plan_greedy(ofertas):
     return sum([oferta[2] for oferta in seleccionadas]), seleccionadas
 
 # print(mejor_plan_greedy(ofertas))
-# print(mejor_plan(ofertas))
+# print(mejor_plan_recursivo(ofertas))
+# print(mejor_plan_dinamico(ofertas))
