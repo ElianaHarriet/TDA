@@ -743,3 +743,34 @@ def mejor_plan_greedy(ofertas):
 # print(mejor_plan_greedy(ofertas))
 # print(mejor_plan_recursivo(ofertas))
 # print(mejor_plan_dinamico(ofertas))
+
+def juan_el_vago_escondido(lista):
+    if len(lista) == 0:
+        return []
+    if len(lista) == 1:
+        return [lista[0]]
+
+    memoria = [[] for _ in range(len(lista))]
+    memoria[0] = [lista[0]]
+    memoria[1] = [lista[1]]
+
+    for i in range(2, len(lista)):
+        elemento = lista[i]
+        
+        # opción 1 -> contar el elemento
+        # agarro la mejor sol sin tener en cuenta al anterior (memoria[i - 2])
+        opcion1 = memoria[i - 2] + [elemento]
+        
+        # opción 2 -> no contar el elemento
+        # agarro la mejor sol (memoria[i - 1])
+        opcion2 = memoria[i - 1]
+        
+        # me quedo con el  que maximice
+        memoria[i] = opcion1 if sum(opcion1) > sum(opcion2) else opcion2
+    
+    return memoria[-1]
+
+lista = [8, 12, 13, 24, 55, 26, 37]
+
+print(lista)
+print(juan_el_vago_escondido(lista))

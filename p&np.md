@@ -10,6 +10,7 @@ polinomial, usando llamadas a A si suponemos que A corre en tiempo polinomial en
 tamaño de G y k. Describir la solución. ¿Tiene sentido la hipótesis de que A corre en
 tiempo polinomial en el tamaño de G y k? ¿Por qué? 
 
+---
 
 Para resolver el problema del máximo conjunto independiente en tiempo polinomial, usamos
 el algoritmo de búsqueda binaria.
@@ -50,6 +51,7 @@ Ana     1           3                       3
 Juan                            4
 Pedro   2                       1           1
 
+---
 
 Para demostrar que el problema de los clientes diversos es NP-Completo, reducimos el problema
 de independent set a este problema.
@@ -123,5 +125,18 @@ esas canciones que le gustan. Deseamos saber si podemos seleccionar un subconjun
 más de “k” canciones, de tal forma que existe al menos 1 canción que le gusta a cada uno.
 Se pide: Demostrar que el problema es NP-Completo.
 HINT: Se puede utilizar Vertex Cover.
+
+-> miro
+
+##############################################################################################
+
+... Modelo 04 de final ...
+Un instituto de enseñanza debe coordinar las fechas de exámenes finales de sus respectivos
+cursos. En cada curso se anotaron varios alumnos. Y un alumno puede estar en varios cursos.
+En total se cuenta con “k” fechas posibles de examen. Se desea generar un procedimiento
+eficiente para decidir si es posible cumplir con ese requerimiento. En caso afirmativo, dar
+una posible asignación de exámenes por fecha.
+Se pide: Demostrar que el problema es NP-Completo.
+HINT: Se puede utilizar K-coloreo de grafos.
 
 -> miro

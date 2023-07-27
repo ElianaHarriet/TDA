@@ -269,8 +269,8 @@ def sale_ultimo(personas, lista=orden(personas)):
 # print("Espera máxima 2: ", max(espera2(personas, orden2(personas)).values()))
 # print("Espera total 2: ", sum(espera2(personas, orden2(personas)).values()))
 
-print("Sale último: ", sale_ultimo(personas))
-print("Sale último 2: ", sale_ultimo(personas, orden2(personas)))
+# print("Sale último: ", sale_ultimo(personas))
+# print("Sale último 2: ", sale_ultimo(personas, orden2(personas)))
 
 
 
@@ -323,6 +323,54 @@ def formula(x, ingredientes, costos):
 
 # print("Formula: ", formula(x, ingredientes, costos))
 
+"""
+Las bolsas de un supermercado se cobran por separado y soportan hasta un peso máximo P,
+por encima del cual se rompen.
+- Implementar un algoritmo greedy que, teniendo una lista de pesos de n productos
+  comprados, encuentre la mejor forma de distribuir los productos en la menor cantidad
+  posible de bolsas.
+- Realizar el seguimiento del algoritmo propuesto para bolsas con peso máximo 5 y para
+  una lista con los pesos: [ 4, 2, 1, 3, 5 ].
+- ¿El algoritmo implementado encuentra siempre la solución óptima? Justificar. 
+"""
 
+def bolsas_greedy(p, pesos):
+    bolsas = []
+
+    for peso in sorted(pesos, reverse=True):
+        if len(bolsas) == 0:
+            bolsas.append([peso])
+            continue
+
+        bolsa_minima = min(bolsas, key=lambda x: sum(x))
+        if sum(bolsa_minima) + peso <= p:
+            bolsa_minima.append(peso)
+        else:
+            bolsas.append([peso])
+
+    return bolsas
+
+# print("Bolsas greedy gaga1: ", bolsas_greedy(5, [4, 2, 1, 3, 5]))
+
+def embolsar_greedy(productos, peso_max):
+    bolsas = []
+    bolsa_actual = []
+    for producto in productos:
+        if sum(bolsa_actual)+producto < peso_max:
+            bolsa_actual.append(producto)
+        else:
+            bolsas.append(bolsa_actual)
+            bolsa_actual = [producto]
+    bolsas.append(bolsa_actual)
+    return bolsas
+
+# print("Bolsas greedy gaga2: ", embolsar_greedy([4, 2, 1, 3, 5], 5))
+
+ej2 = [5, 4, 3, 2, 2, 2, 2]
+from random import shuffle
+shuffle(ej2)
+print("p = 10, elementos = ", ej2)
+print("bolsas_gaga1 = ", bolsas_greedy(10, ej2))
+print("bolsas_gaga2 = ", embolsar_greedy(ej2, 10))
 
 
