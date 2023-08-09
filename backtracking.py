@@ -87,3 +87,50 @@ matriz = [
     ["AGUA",         "AGUA",         "AGUA",         "AGUA",         "AGUA",        "AGUA",         "SUBMARINO",    "AGUA",     ],
 ]
 print(faros(matriz))
+
+"""
+2.
+Para ayudar a personas con problemas visuales (por ejemplo, daltonismo) el gobierno de Agrabah
+decidió que en una misma parada de colectivo nunca pararán dos colectivos que usen el mismo
+color. El problema es que ya saben que eso está sucediendo hoy en día, así que van a repintar
+todas las líneas de colectivos. Por problemas presupuestarios, sólo pueden pintar los colectivos
+de k colores diferentes (por ejemplo, k = 4, pero podría se otro valor). Como no quieren parecer
+un grupo de improvisados que malgasta los fondos públicos, quieren hacer un análisis para saber
+si es posible cumplir con lo pedido (pintar cada línea con alguno de los k colores, de tal forma
+que no hayan dos de mismo color coincidiendo en la misma parada).
+Considerando que se tiene la información de todas las paradas de colectivo y qué líneas paran allí,
+modelar el problema utilizando grafos e implementar un algoritmo que determine si es posible resolver
+el problema.
+Indicar la complejidad del algoritmo implementado. 
+"""
+
+def hay_conflictos(grafo, coloreado, v):
+    for w in grafo.adyacentes(v):
+        if coloreado[w] == coloreado[v]:
+            return True
+    return False
+
+
+def k_coloreo(grafo, k, vertices, coloreados):
+    if len(vertices) == 0:
+        return True
+    
+    v = vertices.pop(0)
+
+    for color in range(k):
+        coloreados[v] = color
+        if not hay_conflictos(grafo, coloreados, v):
+            if k_coloreo(grafo, k, vertices, coloreados):
+                return True
+        coloreados[v] = None
+
+    vertices.insert(0, v)
+    return False
+    
+def colectivos(grafo, k):
+    vertices = grafo.obtener_vertices()
+    coloreados = {v: None for v in vertices}
+    return k_coloreo(grafo, k, vertices, coloreados)
+
+# O(k^n) -> por cada vertice, tengo k opciones de coloreo
+    

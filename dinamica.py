@@ -772,5 +772,74 @@ def juan_el_vago_escondido(lista):
 
 lista = [8, 12, 13, 24, 55, 26, 37]
 
-print(lista)
-print(juan_el_vago_escondido(lista))
+# print(lista)
+# print(juan_el_vago_escondido(lista))
+
+"""
+1.
+Un bodegón tiene una única mesa larga con W lugares. Hay una persona en la puerta
+que anota los grupos que quieren sentarse a comer, y la cantidad de integrantes
+que conforma a cada uno. Para simplificar su trabajo, se los anota en un vector P
+donde P[i] contiene la cantidad de personas que integran el grupo i, siendo en
+total n grupos. Como se trata de un restaurante familiar, las personas sólo se
+sientan en la mesa si todos los integrantes de su grupo pueden sentarse.
+Implementar un algoritmo que, mediante programación dinámica, obtenga el conjunto
+de grupos que ocupan la mayor cantidad de espacios en la mesa (o en otras palabras,
+que dejan la menor cantidad de espacios vacíos).
+Indicar y justificar la complejidad del algoritmo. 
+"""
+
+def mesa_w(w, grupos):
+    ocupados, sum_ocupados = [], 0
+    ocupados_ant, sum_ocupados_ant = [], 0
+    
+    for i in range(len(grupos)):
+        cant_integrantes = grupos[i]
+        if cant_integrantes > w:
+            continue
+
+        if sum_ocupados + cant_integrantes <= w:
+            ocupados.append(cant_integrantes)
+            sum_ocupados += cant_integrantes
+            continue
+
+        # opción 1 -> tenerlo en cuenta
+        opcion1, sum_opcion1 = [cant_integrantes], cant_integrantes
+        if sum_ocupados_ant + cant_integrantes <= w:
+            opcion1 = ocupados_ant + [cant_integrantes]
+            sum_opcion1 = sum_ocupados_ant + cant_integrantes
+
+        # opción 2 -> no tenerlo en cuenta
+        opcion2, sum_opcion2 = ocupados, sum_ocupados
+
+        # me quedo con el que maximice
+        ocupados_ant, sum_ocupados_ant = ocupados[:], sum_ocupados
+        ocupados, sum_ocupados = opcion1, sum_opcion1
+        if sum_opcion1 < sum_opcion2:
+            ocupados, sum_ocupados = opcion2, sum_opcion2
+
+    return ocupados
+
+op_mayor_grupo = randint(1, 25)
+cant_grupos = randint(1, 25) + 5
+
+# grupos = [randint(1, op_mayor_grupo) for i in range(cant_grupos)]
+# print(f"op_mayor_grupo: {op_mayor_grupo}\ncant_grupos: {cant_grupos}\ngrupos: {grupos}")
+# diferencias = []
+# for i in range(0, sum(grupos) + 1):
+#     mesa = mesa_w(i, grupos)
+#     # print(mesa, i, sum(mesa))
+#     diferencias.append(i - sum(mesa))
+# print(diferencias)
+
+"""
+3.
+Dado un número n, mostrar la cantidad más económica (con menos términos) de escribirlo como una
+suma de cuadrados, utilizando programación dinámica. Indicar y justificar el orden del algoritmo
+implementado. Aclaración: siempre es posible escribir a n como suma de n términos de la forma 1^2,
+por lo que siempre existe solución.
+Sin embargo, la expresión 10 = 3^2 + 1^2 es una manera más económica de escribirlo para n = 10,
+pues sólo tiene dos términos. Además, tener en cuenta que no se piden los términos, sino la cantidad
+mínima de términos cuadráticos necesaria. 
+"""
+
