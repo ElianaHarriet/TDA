@@ -802,12 +802,13 @@ def mesa_w(w, grupos):
             ocupados.append(cant_integrantes)
             sum_ocupados += cant_integrantes
             continue
-
         # opción 1 -> tenerlo en cuenta
         opcion1, sum_opcion1 = [cant_integrantes], cant_integrantes
         if sum_ocupados_ant + cant_integrantes <= w:
             opcion1 = ocupados_ant + [cant_integrantes]
             sum_opcion1 = sum_ocupados_ant + cant_integrantes
+        elif sum_ocupados_ant > sum_opcion1:
+            opcion1, sum_opcion1 = ocupados_ant, sum_ocupados_ant
 
         # opción 2 -> no tenerlo en cuenta
         opcion2, sum_opcion2 = ocupados, sum_ocupados
@@ -843,3 +844,118 @@ pues sólo tiene dos términos. Además, tener en cuenta que no se piden los té
 mínima de términos cuadráticos necesaria. 
 """
 
+def cuadrados(n):
+    if n == 0:
+        return 0, []
+    if n == 1:
+        return 1, [1]
+
+    posibles = numeros_posibles(n)
+    posibles = posibles[::-1]
+
+    memoria = [(0, []) for i in range(len(posibles))] # memoria[i] = cuadrados(i)
+    memoria[0] = posibles[0], [posibles[0]]
+
+    for i in range(1, len(posibles)):
+        if memoria[i - 1][0] == n:
+            return memoria[i - 1]
+        
+        posible = posibles[i]
+
+        # vemos si conviene poner el posible
+        # o conviene no ponerlo
+
+        # si no pongo el posible
+        opcion1 = memoria[i - 1]
+
+        # si lo pongo
+        opcion2 = posible**2, [posible]
+        for j in range(i - 1, -1, -1):
+            if memoria[j][0] + posible**2 <= n:
+                opcion2 = memoria[j][0] + posible**2, memoria[j][1] + [posible]
+                break
+        
+        if opcion1[0] > opcion2[0]:
+            memoria[i] = opcion1
+        elif opcion1[0] < opcion2[0]:
+            memoria[i] = opcion2
+        elif len(opcion1[1]) < len(opcion2[1]):
+            memoria[i] = opcion1
+        else:
+            memoria[i] = opcion2
+
+    return memoria[-1]
+
+def numeros_posibles(n):
+    posibles = []
+    for i in range(1, n + 1):
+        if i * i > n:
+            break
+        sum = 0
+        while sum <= n:
+            sum += i * i
+            posibles.append(i)
+    return posibles
+
+# def todas_las_combinaciones(n):
+#     if n == 0:
+#         return []
+#     posibles = []
+#     for i in range(1, n + 1):
+#         if i * i > n:
+#             break
+#         sum = 0
+#         while sum <= n:
+#             sum += i * i
+#             posibles.append(i)
+    
+#     combinaciones = []
+#     for i in range(len(posibles)):
+#         rest = n - posibles[i]**2
+#         if rest < 0:
+#             continue
+#         comb = todas_las_combinaciones(rest)
+#         combinaciones.append([posibles[i]] + comb)
+    
+#     combinaciones_ok = []
+#     for c in combinaciones:
+#         sum = 0
+#         for i in range(len(c)):
+#             sum += c[i]**2
+#         if sum == n:
+#             combinaciones_ok.append(c)
+    
+#     len_min = min([len(c) for c in combinaciones_ok])
+#     combinaciones_ok = [c for c in combinaciones_ok if len(c) == len_min]
+#     return combinaciones_ok[0]
+
+# for i in range(1000):
+#     # print(i)
+#     # print("------")
+#     res = cuadrados(i)
+#     print("res->", res)
+#     if res[0] != i:
+#         print("ERROR")
+#         break
+
+# def cant_monedas(sist_monetario, dinero):
+#     cant = [0 for i in range(dinero+1)]
+#     cant[0] = 0
+#     for i in range(1, dinero+1):
+#         minimo = i # usar todas monedas de 1
+#         for moneda in sist_monetario:
+#             if moneda > i: continue
+#             cantidad = 1 + cant[i - moneda]
+#             if cantidad < minimo: minimo = cantidad
+#         cant[i] = minimo
+#     return cant[dinero]
+
+
+# for i in range(20):
+#     monedas = []
+#     for j in range(1, i + 1):
+#         if j * j > i:
+#             break
+#         monedas.append(j)
+#     print(i, cant_monedas(monedas, i))
+#     print(i, len(cuadrados(i)[1]))
