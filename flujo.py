@@ -68,6 +68,34 @@ def aumentar_flujo(arista, red_residual, fuente, sumidero): # O(V + E)
     actualizar_flujo(red_residual, fuente, sumidero, padres, aumento) # O(V)
     return True
         
+"""
+Carlos tiene un problema: sus 5 hijos no se soportan. Esto es a tal punto, que ni
+siquiera están dispuestos a caminar juntos para ir a la escuela. Incluso más:
+¡tampoco quieren pasar por una cuadra por la que haya pasado alguno de sus hermanos!
+Sólo aceptan pasar por las esquinas, si es que algún otro pasó por allí. Por suerte,
+tanto la casa como la escuela quedan en esquinas, pero no está seguro si es posible
+enviar a sus 5 hijos a la misma escuela. Utilizando lo visto en la materia, formular
+este problema y resolverlo. Indicar y justificar la complejidad del algoritmo. 
+"""
+
+def ford_fulkerson(grafo, fuente, sumidero): # O(V * E^2)
+    red_residual = grafo.copy()
     
+    while True:
+        padres = bfs(red_residual, fuente, sumidero) # O(V + E)
+        if not padres:
+            break
+        aumento = obtener_aumento(red_residual, fuente, sumidero, float('inf'), padres) # O(V)
+        actualizar_flujo(red_residual, fuente, sumidero, padres, aumento) # O(V)
+    
+    return red_residual
+
+def k_hijos_posibles(grafo_ciudad, casa, escuela, k):
+    red_residual = ford_fulkerson(grafo_ciudad, casa, escuela) # O(V * E) por ser el problema de caminos disjuntos
+    flujo = 0
+    for v in red_residual.adyacentes(casa):
+        if red_residual.estan_unidos(v, casa):
+            flujo += red_residual.peso_arista(v, casa)
+    return flujo >= k
 
     
